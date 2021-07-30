@@ -1,12 +1,15 @@
-package me.ender.highlands.exploration.quests;
+package me.ender.highlands.exploration.book;
 
 import com.google.gson.*;
+import me.ender.highlands.exploration.conditions.CitizensUnlock;
+import me.ender.highlands.exploration.conditions.IUnlockCondition;
 import net.md_5.bungee.api.ChatColor;
 import net.md_5.bungee.api.chat.*;
 import net.md_5.bungee.api.chat.hover.content.Content;
 
 import java.lang.reflect.Type;
 import java.util.ArrayList;
+import java.util.UUID;
 
 public class QuestBookSerializer implements JsonSerializer<QuestBook>, JsonDeserializer<QuestBook> {
     @Override
@@ -21,7 +24,7 @@ public class QuestBookSerializer implements JsonSerializer<QuestBook>, JsonDeser
             var jsonPage = new JsonObject(); // page
             var jsonComps = new JsonArray();
 
-            for(var comp : page.getPage()) {
+            for(var comp : page.getRawPage()) {
                 jsonComps.add(serialize(comp, context));
             }
 
@@ -82,14 +85,7 @@ public class QuestBookSerializer implements JsonSerializer<QuestBook>, JsonDeser
         }
         return jsonComp;
     }
-    private JsonElement serialize(IUnlockCondition condition) {
-        var jsonCondition = new JsonObject();
-        jsonCondition.addProperty("implementation", condition.getImplementation());
-        jsonCondition.addProperty("type", condition.getType().name());
-        jsonCondition.addProperty("identifier", condition.getIdentifier());
-        jsonCondition.addProperty("event", condition.getEvent().name());
-        return jsonCondition;
-    }
+
 
     @Override
     public QuestBook deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context) throws JsonParseException {
@@ -114,7 +110,7 @@ public class QuestBookSerializer implements JsonSerializer<QuestBook>, JsonDeser
 
                 var condition = page.getAsJsonObject("condition");
                 if(condition != null) {
-                    qpage.condition = null;
+                    qpage.condition = deserializeCondition(condition);
                 }
             //conditions
 
@@ -123,6 +119,7 @@ public class QuestBookSerializer implements JsonSerializer<QuestBook>, JsonDeser
         return book;
     }
     private QuestComponent deserialize(JsonObject component, JsonDeserializationContext context) {
+        var qc = new QuestComponent();
         var text = component.get("text").getAsString();
         ChatColor color = ChatColor.BLACK;
         var colorstr = component.get("color");
@@ -156,6 +153,49 @@ public class QuestBookSerializer implements JsonSerializer<QuestBook>, JsonDeser
                     Enum.valueOf(HoverEvent.Action.class, hover.get("action").getAsString()),
                     content));
         }
-        return new QuestComponent(comp);
+        qc.setComponent(comp);
+        var condition =component.get("condition");
+        if(condition != null) {
+            qc.setCondition(deserializeCondition(condition.getAsJsonObject()));
+        }
+        return qc;
+    }
+
+    private JsonElement serialize(IUnlockCondition condition) {
+        var jsonCondition = new JsonObject();
+        jsonCondition.addProperty("implementation", condition.getImplementation());
+        jsonCondition.addProperty("type", condition.getType().name());
+        jsonCondition.addProperty("identifier", condition.getIdentifier());
+        jsonCondition.addProperty("event", condition.getEvent().name());
+        if(condition.getUUID() == null)
+            condition.setUUID(UUID.randomUUID()); //need a uuid
+        jsonCondition.addProperty("uuid", condition.getUUID().toString());
+        return jsonCondition;
+    }
+    private IUnlockCondition deserializeCondition(JsonObject component) {
+        IUnlockCondition condition = null;
+        var impl = component.get("implementation").getAsString();
+        var eventName = component.get("event").getAsString();
+        switch(impl) { //maybe impl should be an enum
+            case "npc":
+                condition = new CitizensUnlock();
+                condition.setEvent(Enum.valueOf(CitizensUnlock.Events.class, eventName));
+                break;
+            default:
+                //bad bad bad
+                break;
+        }
+
+        condition.setType(Enum.valueOf(IUnlockCondition.Identifiers.class,component.get("type").getAsString()));
+        condition.setIdentifier(component.get("identifier").getAsString());
+        var uuidStr = component.get("uuid");
+        UUID uuid = null;
+        if(uuidStr == null)
+            uuid = UUID.randomUUID();
+        else
+            uuid = UUID.fromString(uuidStr.getAsString());
+        condition.setUUID(uuid);
+
+        return condition;
     }
 }

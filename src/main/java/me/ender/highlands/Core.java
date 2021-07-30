@@ -1,11 +1,14 @@
-package me.ender.highlands.exploration;
+package me.ender.highlands;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-import me.ender.highlands.exploration.quests.QuestBook;
-import me.ender.highlands.exploration.quests.QuestBookSerializer;
-import me.ender.highlands.exploration.quests.QuestComponent;
-import me.ender.highlands.exploration.quests.QuestPage;
+import me.ender.highlands.exploration.conditions.CitizensUnlock;
+import me.ender.highlands.exploration.ExplorationHandler;
+import me.ender.highlands.exploration.conditions.IUnlockCondition;
+import me.ender.highlands.exploration.book.QuestBook;
+import me.ender.highlands.exploration.book.QuestComponent;
+import me.ender.highlands.exploration.book.QuestPage;
+import me.ender.highlands.exploration.book.QuestBookSerializer;
 import net.md_5.bungee.api.ChatColor;
 import net.md_5.bungee.api.chat.BaseComponent;
 import net.md_5.bungee.api.chat.ClickEvent;
@@ -27,8 +30,14 @@ import java.nio.file.Path;
 
 public class Core extends JavaPlugin{
 
+    private ExplorationHandler explorationHandler;
+    public ExplorationHandler getExplorationHandler() {
+        return explorationHandler;
+    }
+
     @Override
     public void onEnable() {
+        explorationHandler = new ExplorationHandler(this);
         if(!getDataFolder().exists()) {
             try {
                 Files.createDirectory(getDataFolder().toPath());
@@ -46,7 +55,7 @@ public class Core extends JavaPlugin{
     @Override
     public boolean onCommand(@NotNull CommandSender sender, @NotNull Command command, @NotNull String label, @NotNull String[] args) {
         var p = (Player)sender;
-        ItemStack book = spigotBook();
+        ItemStack book = null;//spigotBook();
         if(args.length > 0) {
             switch(args[0]) {
                 case "location2":
@@ -71,7 +80,8 @@ public class Core extends JavaPlugin{
                         var json = Files.readString(Path.of("plugins/HighlandsExploration", "test.json"));
                         var g = new Gson();
                         QuestBook qb = g.fromJson(json, QuestBook.class);
-                        book = qb.getBook();
+                        book = qb.getBook(explorationHandler.getPlayer(p));
+
 
                     } catch (IOException e) {
                         e.printStackTrace();
@@ -83,10 +93,8 @@ public class Core extends JavaPlugin{
         }
 
 
-
+        if(book==null) book = spigotBook();
         p.openBook(book);
-
-
 
 
         return true;
@@ -99,18 +107,18 @@ public class Core extends JavaPlugin{
         var comp2 = new QuestComponent(new ComponentBuilder("\n\nLocation 1").color(ChatColor.RED).strikethrough(true).create()[0]);
         var comp3 = new QuestComponent(
                 new ComponentBuilder("\nLocation 2").color(ChatColor.GREEN).strikethrough(false).event(
-                        new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/ecore location2")).create()[0]);
+                        new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/ecore location2")).create()[0],
+                new CitizensUnlock(CitizensUnlock.Events.NPCClickEvent, IUnlockCondition.Identifiers.INT, "123"));
         var page = new QuestPage(new QuestComponent[]{comp1,comp2, comp3});
         qb.addPage(page);
         var g = new GsonBuilder().setPrettyPrinting().registerTypeAdapter(QuestBook.class, new QuestBookSerializer()).create();
         var json = g.toJson(qb);
-
         try {
             Files.write(Path.of("plugins/HighlandsExploration", "test.json"), json.getBytes(StandardCharsets.UTF_8));
         } catch (IOException e) {
             e.printStackTrace();
         }
-        return qb.getBook();
+        return qb.getRawBook();
     }
     private ItemStack spigotBook2() {
         ItemStack book = new ItemStack(Material.WRITTEN_BOOK);

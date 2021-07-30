@@ -1,4 +1,4 @@
-main: me.ender.highlands.exploration.Core
+main: me.ender.highlands.Core
 name: HighlandsExploration
 description: Test
 version: 0.1.0

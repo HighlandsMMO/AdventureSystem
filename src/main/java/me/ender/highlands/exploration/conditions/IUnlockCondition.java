@@ -1,4 +1,6 @@
-package me.ender.highlands.exploration.quests;
+package me.ender.highlands.exploration.conditions;
+
+import java.util.UUID;
 
 public interface IUnlockCondition {
     enum Identifiers {
@@ -8,6 +10,8 @@ public interface IUnlockCondition {
         REGION,
 
     }
+    void setUUID(UUID uuid);
+    UUID getUUID();
 
     void setType(Identifiers type);
     Identifiers getType();

@@ -1,21 +1,22 @@
-package me.ender.highlands.exploration.quests;
+package me.ender.highlands.exploration.book;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-import net.md_5.bungee.api.ChatColor;
+import me.ender.highlands.exploration.conditions.IUnlockCondition;
+import me.ender.highlands.exploration.conditions.IUnlockable;
 import net.md_5.bungee.api.chat.BaseComponent;
-import net.md_5.bungee.api.chat.ClickEvent;
-import net.md_5.bungee.api.chat.ClickEvent.Action;
-import net.md_5.bungee.api.chat.ComponentBuilder;
+import org.bukkit.entity.Player;
 
-public class QuestComponent {
+public class QuestComponent implements IUnlockable {
    private BaseComponent component;
    private IUnlockCondition condition;
 
+   public QuestComponent() {}
    public QuestComponent(BaseComponent component) {
        this.component = component;
+    }
+
+    public QuestComponent(BaseComponent component, IUnlockCondition condition) {
+       this.component = component;
+       this.condition = condition;
     }
 
     public BaseComponent getComponent() {
@@ -32,6 +33,13 @@ public class QuestComponent {
 
     public void setCondition(IUnlockCondition condition) {
         this.condition = condition;
+    }
+
+    @Override
+    public boolean isUnlocked(Player player) {
+        return false;
+
+
     }
 }
 

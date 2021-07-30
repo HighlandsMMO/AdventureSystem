@@ -1,14 +1,18 @@
-package me.ender.highlands.exploration.quests;
-
-import net.citizensnpcs.api.CitizensAPI;
+package me.ender.highlands.exploration.conditions;
 
 public class CitizensUnlock extends UnlockCondition{
 
-
+    public CitizensUnlock() {}
+    public CitizensUnlock(Events event, Identifiers type, String id) {
+        this.event = event;
+        this.type = type;
+        this.identifier = id;
+    }
     @Override
     public String getImplementation() {
         return "npc";
     }
+
 
     @Override
     public Enum getEvent() {
