@@ -89,11 +89,11 @@ public class Core extends JavaPlugin{
                 }break;
             }
         } else{
+            if(book==null) book = spigotBook();
             p.getInventory().addItem(book);
         }
 
 
-        if(book==null) book = spigotBook();
         p.openBook(book);
 
 
