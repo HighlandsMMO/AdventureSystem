@@ -1,0 +1,10 @@
+me\ender\highlands\exploration\quests\IUnlockCondition.class
+me\ender\highlands\exploration\quests\UnlockCondition.class
+me\ender\highlands\exploration\quests\CitizensUnlock.class
+me\ender\highlands\exploration\quests\QuestPage.class
+me\ender\highlands\exploration\quests\QuestComponent.class
+me\ender\highlands\exploration\quests\IUnlockCondition$Identifiers.class
+me\ender\highlands\exploration\quests\QuestBookSerializer.class
+me\ender\highlands\exploration\quests\CitizensUnlock$Events.class
+me\ender\highlands\exploration\quests\QuestBook.class
+me\ender\highlands\exploration\Core.class

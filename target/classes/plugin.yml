@@ -1,0 +1,9 @@
+main: me.ender.highlands.exploration.Core
+name: HighlandsExploration
+description: Test
+version: 0.1.0
+author: EnderGS
+api-version: 1.17
+commands:
+  ecore:
+    description: A great command

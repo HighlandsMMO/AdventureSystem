@@ -1,0 +1,33 @@
+{
+  "title": "Explore",
+  "author": "Server",
+  "pages": [
+    {
+      "lines": [
+        {
+          "components": [
+            {
+              "text": "Chapter 1",
+              "bold": true
+            },
+            {
+              "text": "\n\nLocation 1",
+              "color": "red",
+              "bold": true,
+              "strike": true
+            },
+            {
+              "text": "\nLocation 2",
+              "color": "green",
+              "bold": true,
+              "clickEvent": {
+                "action": "RUN_COMMAND",
+                "value": "/ecore location2"
+              }
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
