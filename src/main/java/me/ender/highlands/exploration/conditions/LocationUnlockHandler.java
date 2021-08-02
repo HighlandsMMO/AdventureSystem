@@ -18,7 +18,7 @@ public class LocationUnlockHandler implements Listener {
     private final ExplorationHandler explorationHandler;
 
 
-    private Map<Block, List<UUID>> blockClickEventMap;
+    private Map<Block, List<IUnlockCondition>> blockClickEventMap;
 
     public LocationUnlockHandler(ExplorationHandler handler) {
         this.explorationHandler = handler;
@@ -44,15 +44,14 @@ public class LocationUnlockHandler implements Listener {
                     return false;
                 if(blockClickEventMap.containsKey(block)) {
                     var list = blockClickEventMap.get(block);
-                    if(list.contains(event.getUUID())) {
+                    if(list.contains(event)) {
                         return false;
                     }
-                    list.add(event.getUUID());
+                    list.add(event);
                 } else {
-                    var list = new ArrayList<UUID>();
-                    list.add(event.getUUID());
+                    var list = new ArrayList<IUnlockCondition>();
+                    list.add(event);
                     blockClickEventMap.put(block, list);
-                    System.out.println(block);
                 }
             }
         }
@@ -71,8 +70,8 @@ public class LocationUnlockHandler implements Listener {
         if(list == null)
             return;
         var data = explorationHandler.getQuestData(e.getPlayer().getUniqueId()); //data should never be null;
-        for(var uuid : list) {
-            data.setUnlocked(uuid);
+        for(var condition : list) {
+            data.setUnlocked(condition);
         }
     }
 }

@@ -1,32 +1,38 @@
 package me.ender.highlands.exploration.book;
 
-import net.Indyuce.mmoitems.MMOItems;
-import org.bukkit.inventory.ItemStack;
+public abstract class QuestReward implements IQuestReward{
+    protected RewardType type;
+    protected String data;
 
-public abstract class QuestReward {
-    ItemStack reward;
-    String type;
-    String id;
+    public QuestReward() {}
 
-    public void setReward(ItemStack reward) {
-        this.reward = reward;
+    public QuestReward(RewardType type, String data) {
+        this.type = type;
+        this.data = data;
     }
-    public abstract ItemStack getReward();
 
-    public String getType() {
+    @Override
+    public RewardType getRewardType() {
         return type;
     }
 
-    public void setType(String type) {
+    @Override
+    public void setRewardType(RewardType type) {
         this.type = type;
     }
 
-    public String getId() {
-        return id;
+    @Override
+    public String getData() {
+        return data;
     }
 
-    public void setId(String id) {
-        this.id = id;
+    @Override
+    public void setData(String data) {
+        this.data = data;
     }
 
+    /**
+     * Transform the data into something that can be used by the implementor
+     */
+    abstract void parseData();
 }

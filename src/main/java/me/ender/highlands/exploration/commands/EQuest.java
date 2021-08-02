@@ -52,7 +52,7 @@ public class EQuest extends ECommand {
                         }
                         var reward = rewards.get(index);
                         if(handler.getRewardUnlocked(p, reward) || p.hasPermission("ender.exploration.admin"))
-                            p.getInventory().addItem(reward.getReward());
+                            reward.registerReward(handler.getPlayer(p));
                     }
                 }
 

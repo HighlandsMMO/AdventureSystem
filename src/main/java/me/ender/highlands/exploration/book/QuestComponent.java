@@ -1,25 +1,22 @@
 package me.ender.highlands.exploration.book;
 
 import me.ender.highlands.exploration.conditions.IUnlockCondition;
-import me.ender.highlands.exploration.conditions.IUnlockable;
 import net.md_5.bungee.api.chat.BaseComponent;
-import org.bukkit.entity.Player;
-
-import java.util.List;
 
 public class QuestComponent {
-   private BaseComponent component;
-   private IUnlockCondition condition;
-   private QuestReward reward;
+    private BaseComponent component;
+    private IUnlockCondition condition;
 
-   public QuestComponent() {}
-   public QuestComponent(BaseComponent component) {
-       this.component = component;
+    public QuestComponent() {
+    }
+
+    public QuestComponent(BaseComponent component) {
+        this.component = component;
     }
 
     public QuestComponent(BaseComponent component, IUnlockCondition condition) {
-       this.component = component;
-       this.condition = condition;
+        this.component = component;
+        this.condition = condition;
     }
 
     public BaseComponent getComponent() {
@@ -38,11 +35,14 @@ public class QuestComponent {
         this.condition = condition;
     }
 
-    public QuestReward getReward() {
-       return reward;
+    public IQuestReward getReward() {
+        if (condition != null)
+            return condition.getQuestReward();
+        return null;
     }
-    public void setReward(QuestReward reward) {
-       this.reward = reward;
+
+    public void setReward(IQuestReward reward) {
+        condition.setQuestReward(reward);
     }
 
 }

@@ -16,13 +16,10 @@ public interface IQuestData {
      * @return
      */
     boolean getUnlocked(IUnlockCondition condition);
-    boolean getUnlocked(UUID uuid);
 
     void setUnlocked(IUnlockCondition condition);
-    void setUnlocked(UUID uuid);
 
     void setLocked(IUnlockCondition condition);
-    void setLocked(UUID uuid);
 
     void saveData();
 }

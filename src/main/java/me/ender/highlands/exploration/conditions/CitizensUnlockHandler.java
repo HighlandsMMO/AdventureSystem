@@ -17,7 +17,7 @@ public class CitizensUnlockHandler implements Listener {
     private final ExplorationHandler explorationHandler;
 
 
-    private Map<Integer, List<UUID>> npcRightClickMap;
+    private Map<Integer, List<IUnlockCondition>> npcRightClickMap;
 
     public CitizensUnlockHandler(ExplorationHandler handler) {
         this.explorationHandler = handler;
@@ -37,13 +37,13 @@ public class CitizensUnlockHandler implements Listener {
                 var id = Integer.parseInt(event.getIdentifier());
                 if(npcRightClickMap.containsKey(id)) {
                     var list = npcRightClickMap.get(id);
-                    if(list.contains(event.getUUID())) { //return if false
+                    if(list.contains(event)) { //return if false
                         return false;
                     }
-                    list.add(event.getUUID());
+                    list.add(event);
                 } else {
-                    var list = new ArrayList<UUID>();
-                    list.add(event.getUUID());
+                    var list = new ArrayList<IUnlockCondition>();
+                    list.add(event);
                     npcRightClickMap.put(id, list);
                     System.out.println(id);
                 }

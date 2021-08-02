@@ -2,6 +2,7 @@ package me.ender.highlands.exploration;
 
 import co.aikar.util.JSONUtil;
 import com.google.gson.Gson;
+import com.google.gson.annotations.Expose;
 import com.google.gson.reflect.TypeToken;
 import me.ender.highlands.exploration.conditions.IUnlockCondition;
 import me.ender.highlands.exploration.data.IQuestData;
@@ -22,7 +23,7 @@ import java.util.UUID;
 
 public class QuestPlayer implements IQuestData{
     private final UUID uuid;
-    private Player player;
+    private transient Player player;
     private Set<UUID> conditionStore;
 
     public QuestPlayer(UUID uuid, Set<UUID> conditionStore) {
@@ -50,34 +51,20 @@ public class QuestPlayer implements IQuestData{
             return true; //if there is no condition then its always unlocked
         return conditionStore.contains(condition.getUUID());
     }
-
-    @Override
-    public boolean getUnlocked(UUID uuid) {
-        return conditionStore.contains(uuid);
-    }
-
     @Override
     public void setUnlocked(IUnlockCondition condition) {
-        if(condition != null)
-            setUnlocked(condition.getUUID());
-    }
-
-    @Override
-    public void setUnlocked(UUID uuid) {
-        conditionStore.add(uuid);
-        saveData();
+        if(condition != null) {
+            conditionStore.add(condition.getUUID());
+            saveData();
+        }
     }
 
     @Override
     public void setLocked(IUnlockCondition condition) {
-        if(condition != null)
-            setLocked(condition.getUUID());
-    }
-
-    @Override
-    public void setLocked(UUID uuid) {
-        conditionStore.remove(uuid);
-        saveData();
+        if(condition != null) {
+            conditionStore.remove(condition.getUUID());
+            saveData();
+        }
     }
 
     @Override

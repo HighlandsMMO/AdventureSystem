@@ -1,14 +1,10 @@
 package me.ender.highlands.exploration.book;
 
-import io.lumine.mythic.lib.api.item.NBTCompound;
 import me.ender.highlands.exploration.conditions.IUnlockCondition;
 import me.ender.highlands.exploration.QuestPlayer;
 import net.md_5.bungee.api.ChatColor;
 import net.md_5.bungee.api.chat.BaseComponent;
-import net.md_5.bungee.api.chat.HoverEvent;
-import net.md_5.bungee.api.chat.ItemTag;
-import net.md_5.bungee.api.chat.hover.content.Item;
-import org.bukkit.inventory.ItemStack;
+
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -17,7 +13,7 @@ import java.util.List;
 public class QuestPage {
     private List<QuestComponent> components;
     private IUnlockCondition condition;
-    private List<QuestReward> rewards;
+    private List<IQuestReward> rewards;
 
     public QuestPage() {
         components = new ArrayList<>();
@@ -26,10 +22,8 @@ public class QuestPage {
         this.components = Arrays.stream(components).toList();
     }
 
-    public QuestComponent[] getRawPage() {
-        var ary = new QuestComponent[components.size()];
-        components.toArray(ary);
-        return ary;
+    public List<QuestComponent> getRawPage() {
+        return components;
     }
     public BaseComponent[] getRaw() {
         var ary = new BaseComponent[components.size()];
@@ -39,6 +33,9 @@ public class QuestPage {
 
     public void addComponent(QuestComponent component) {
         components.add(component);
+    }
+    public QuestComponent getLine(int index) {
+        return components.get(index);
     }
 
     /**
@@ -52,7 +49,7 @@ public class QuestPage {
         for(var c : components) {
             if(c.getReward() != null) {
                 var comp = c.getComponent();
-                if(player.getUnlocked(c.getCondition().getUUID())){
+                if(player.getUnlocked(c.getCondition())){
                     comp.setClickEvent(null); //remove click event;
                     comp.setColor(ChatColor.GRAY); //set to gray to show locked
                 }
@@ -64,7 +61,7 @@ public class QuestPage {
         return list.toArray(new BaseComponent[0]);
     }
 
-    public List<QuestReward> getRewards() {
+    public List<IQuestReward> getRewards() {
         if(rewards == null) {
             rewards = new ArrayList<>();
             for(var c : components) {
@@ -74,6 +71,7 @@ public class QuestPage {
         }
         return rewards;
     }
+
     public IUnlockCondition getCondition() {
         return condition;
     }

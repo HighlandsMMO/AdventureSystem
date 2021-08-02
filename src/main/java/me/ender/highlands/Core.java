@@ -2,13 +2,10 @@ package me.ender.highlands;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import me.ender.highlands.exploration.book.*;
 import me.ender.highlands.exploration.conditions.CitizensUnlock;
 import me.ender.highlands.exploration.ExplorationHandler;
 import me.ender.highlands.exploration.conditions.IUnlockCondition;
-import me.ender.highlands.exploration.book.QuestBook;
-import me.ender.highlands.exploration.book.QuestComponent;
-import me.ender.highlands.exploration.book.QuestPage;
-import me.ender.highlands.exploration.book.QuestBookSerializer;
 import me.ender.highlands.exploration.conditions.LocationUnlock;
 import net.md_5.bungee.api.ChatColor;
 import net.md_5.bungee.api.chat.BaseComponent;
@@ -116,7 +113,13 @@ public class Core extends JavaPlugin {
                 new ComponentBuilder("\nLocation 2").color(ChatColor.GREEN).strikethrough(false).event(
                         new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/ecore location2")).create()[0],
                 new CitizensUnlock(CitizensUnlock.Events.NPCRightClickEvent, "0")); //new LocationUnlock(LocationUnlock.Events.BlockClick, IUnlockCondition.Identifiers.STRING, block)
-        var page = new QuestPage(new QuestComponent[]{comp1,comp2, comp3});
+        var comp4 = new QuestComponent(
+                new ComponentBuilder("Reward").create()[0],
+                new CitizensUnlock(CitizensUnlock.Events.NPCRightClickEvent, "0")
+
+        );
+        comp4.setReward(new MMOQuestReward("GREATSWORD", "TEST"));
+        var page = new QuestPage(new QuestComponent[]{comp1,comp2, comp3, comp4});
         qb.addPage(page);
         var g = new GsonBuilder().setPrettyPrinting().registerTypeAdapter(QuestBook.class, new QuestBookSerializer()).create();
         var json = g.toJson(qb);

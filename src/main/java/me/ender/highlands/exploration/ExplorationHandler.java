@@ -5,7 +5,7 @@ import com.google.gson.reflect.TypeToken;
 import me.ender.highlands.Core;
 import me.ender.highlands.exploration.book.QuestBook;
 import me.ender.highlands.exploration.book.QuestBookSerializer;
-import me.ender.highlands.exploration.book.QuestReward;
+import me.ender.highlands.exploration.book.IQuestReward;
 import me.ender.highlands.exploration.conditions.*;
 import me.ender.highlands.exploration.data.IQuestData;
 import net.kyori.adventure.text.serializer.gson.GsonComponentSerializer;
@@ -28,7 +28,7 @@ public class ExplorationHandler implements Listener {
     private final Path playerDataLocation;
     private final LocationUnlockHandler locationUnlockHandler;
     private CitizensUnlockHandler citizensUnlockHandler;
-    private Map<UUID, QuestReward> availableRewards;
+    private Map<UUID, IQuestReward> availableRewards;
 
 
     public ExplorationHandler(Core plugin) {
@@ -114,7 +114,8 @@ public class ExplorationHandler implements Listener {
     public QuestPlayer getPlayer(Player player) {
         var data = questData.get(player.getUniqueId());
         if(data == null){
-            plugin.getLogger().info("Somehow there is missing player");
+            loadQuestData(player.getUniqueId());
+            data = questData.get(player.getUniqueId());
         }
         return data;
     }
@@ -135,10 +136,10 @@ public class ExplorationHandler implements Listener {
         return null;
     }
 
-    public void registerReward(Player player, QuestReward reward) {
+    public void registerReward(Player player, IQuestReward reward) {
         availableRewards.put(player.getUniqueId(), reward);
     }
-    public boolean getRewardUnlocked(Player player, QuestReward reward) {
+    public boolean getRewardUnlocked(Player player, IQuestReward reward) {
         if(availableRewards.containsKey(player.getUniqueId())) {
             availableRewards.remove(player.getUniqueId());
 

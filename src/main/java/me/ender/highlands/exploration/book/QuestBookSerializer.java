@@ -64,7 +64,7 @@ public class QuestBookSerializer implements JsonSerializer<QuestBook>, JsonDeser
             //region components
             for(var c : page.getAsJsonArray("components")) {
                 var component = c.getAsJsonObject();
-                var comp = deserializeQuestComponent(component);
+                var comp = deserializeQuestComponent(book,component);
                 qpage.addComponent(comp);
             }
 
@@ -87,21 +87,14 @@ public class QuestBookSerializer implements JsonSerializer<QuestBook>, JsonDeser
             var condition = serializeCondition(qc.getCondition());
             jsonComp.add("condition", condition);
         }
-        if(qc.getReward() != null) {
-            jsonComp.add("reward", serializeReward(qc.getReward()));
-        }
         return jsonComp;
     }
-    private static QuestComponent deserializeQuestComponent(JsonObject component) {
+    private static QuestComponent deserializeQuestComponent(QuestBook book, JsonObject component) {
         var qc = new QuestComponent();
         qc.setComponent(deserializeComponent(component));
         var condition =component.get("condition");
         if(condition != null) {
             qc.setCondition(deserializeCondition(condition.getAsJsonObject()));
-        }
-        var rewards = component.get("reward");
-        if(rewards != null) {
-            qc.setReward(deserializeReward(rewards.getAsJsonObject()));
         }
 
         return qc;
@@ -147,15 +140,20 @@ public class QuestBookSerializer implements JsonSerializer<QuestBook>, JsonDeser
     }
     private static BaseComponent deserializeComponent(JsonObject component) {
         var text = component.get("text").getAsString();
+//        if(text.contains("&")) { //can not use & sign in thing
+//            var str = ChatColor.translateAlternateColorCodes('&', text);
+//            component = serializeComponent(new TextComponent(str));
+//            text = component.get("text").getAsString();
+//        }
         ChatColor color = ChatColor.BLACK;
         var colorstr = component.get("color");
         if(colorstr != null)
             color = ChatColor.of(colorstr.getAsString());
-        var bold = component.get("bold") == null ? false : true;
-        var strike = component.get("strike") == null ? false : true;
-        var italic = component.get("italic") == null ? false : true;
-        var underlined = component.get("underlined") == null ? false : true;
-        var obfuscated = component.get("obfuscated") == null ? false : true;
+        var bold = component.get("bold") != null;
+        var strike = component.get("strike") != null;
+        var italic = component.get("italic") != null;
+        var underlined = component.get("underlined") != null;
+        var obfuscated = component.get("obfuscated") != null;
 
         var comp = new ComponentBuilder(text).create()[0];
         comp.setColor(color);
@@ -230,15 +228,20 @@ public class QuestBookSerializer implements JsonSerializer<QuestBook>, JsonDeser
         jsonCondition.addProperty("implementation", condition.getImplementation());
         jsonCondition.addProperty("identifier", condition.getIdentifier());
         jsonCondition.addProperty("event", condition.getEvent().name());
-        if(condition.getUUID() == null)
+        if(condition.getUUID() == null) {
             condition.setUUID(UUID.randomUUID()); //need a uuid
+        }
         jsonCondition.addProperty("uuid", condition.getUUID().toString());
+        if(condition.getQuestReward() != null) {
+            jsonCondition.add("reward", serializeReward(condition.getQuestReward()));
+        }
         return jsonCondition;
     }
     private static IUnlockCondition deserializeCondition(JsonObject component) {
         IUnlockCondition condition = null;
         var impl = component.get("implementation").getAsString();
         var eventName = component.get("event").getAsString();
+
         switch(impl) { //maybe impl should be an enum
             case "npc":
                 condition = new CitizensUnlock();
@@ -251,7 +254,10 @@ public class QuestBookSerializer implements JsonSerializer<QuestBook>, JsonDeser
                 //bad bad bad
                 break;
         }
-
+        var rewardStr = component.get("reward");
+        if(rewardStr != null) {
+            condition.setQuestReward(deserializeReward(rewardStr.getAsJsonObject()));
+        }
         condition.setIdentifier(component.get("identifier").getAsString());
         var uuidStr = component.get("uuid");
         UUID uuid = null;
@@ -264,21 +270,21 @@ public class QuestBookSerializer implements JsonSerializer<QuestBook>, JsonDeser
         return condition;
     }
 
-    private static JsonObject serializeReward(QuestReward reward) {
+    private static JsonObject serializeReward(IQuestReward reward) {
         var json = new JsonObject();
-        json.addProperty("implementation", reward.getClass().getName());
-        json.addProperty("type", reward.getType());
-        json.addProperty("id", reward.getId());
+        json.addProperty("implementation", reward.getClass().getSimpleName());
+        json.addProperty("type", reward.getRewardType().name());
+        json.addProperty("data", reward.getData());
         return json;
     }
-    private static QuestReward deserializeReward(JsonObject json) {
+    private static IQuestReward deserializeReward(JsonObject json) {
         var impl = json.get("implementation").getAsString();
-        var type = json.get("type").getAsString();
-        var id = json.get("id").getAsString();
-        QuestReward reward = null;
+        var type = IQuestReward.RewardType.valueOf(json.get("type").getAsString());
+        var id = json.get("data").getAsString();
+        //IQuestReward reward = null;
         switch(impl) {
             case "MMOQuestReward" -> {
-                return new MMOQuestReward(type, id);
+                return new MMOQuestReward(id);
             }
         }
         return null;
