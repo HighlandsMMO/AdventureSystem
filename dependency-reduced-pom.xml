@@ -75,6 +75,11 @@
       <id>everything</id>
       <url>https://repo.citizensnpcs.co/</url>
     </repository>
+    <repository>
+      <id>nexus</id>
+      <name>Lumine Releases</name>
+      <url>https://mvn.lumine.io/repository/maven-public/</url>
+    </repository>
   </repositories>
   <dependencies>
     <dependency>
