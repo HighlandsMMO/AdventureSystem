@@ -5,9 +5,12 @@ import me.ender.highlands.exploration.conditions.IUnlockable;
 import net.md_5.bungee.api.chat.BaseComponent;
 import org.bukkit.entity.Player;
 
-public class QuestComponent implements IUnlockable {
+import java.util.List;
+
+public class QuestComponent {
    private BaseComponent component;
    private IUnlockCondition condition;
+   private QuestReward reward;
 
    public QuestComponent() {}
    public QuestComponent(BaseComponent component) {
@@ -35,11 +38,12 @@ public class QuestComponent implements IUnlockable {
         this.condition = condition;
     }
 
-    @Override
-    public boolean isUnlocked(Player player) {
-        return false;
-
-
+    public QuestReward getReward() {
+       return reward;
     }
+    public void setReward(QuestReward reward) {
+       this.reward = reward;
+    }
+
 }
 

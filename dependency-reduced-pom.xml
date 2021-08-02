@@ -33,7 +33,7 @@
         <version>2.4</version>
         <configuration>
           <finalName>${project.name}</finalName>
-          <outputDirectory>C:\Users\Caedin Cook\3D Objects\test\plugins</outputDirectory>
+          <outputDirectory>C:\Users\sharp\Pictures\mc\plugins</outputDirectory>
         </configuration>
       </plugin>
       <plugin>

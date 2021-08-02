@@ -2,40 +2,51 @@ package me.ender.highlands.exploration.book;
 
 import com.google.gson.annotations.JsonAdapter;
 import me.ender.highlands.exploration.QuestPlayer;
+import me.ender.highlands.exploration.conditions.IUnlockCondition;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.BookMeta;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
 @JsonAdapter(QuestBookSerializer.class)
 public class QuestBook {
     public String title;
     public String author;
     public List<QuestPage> pages;
+    private Map<UUID, IUnlockCondition> unlockConditions;
 
 
     public QuestBook(String title, String author) {
         this.title = title;
         this.author = author;
         pages = new ArrayList<>();
+        unlockConditions = new HashMap<>();
 
+    }
+    public Map<UUID, IUnlockCondition> getUnlockConditions() {
+        return unlockConditions;
     }
     ///page is added to book does the book item need to exist
     public void addPage(QuestPage page) {
+        if(pages.contains(page)) {
+            return;
+        }
+        var pageCondition = page.getCondition();
+        if(pageCondition != null)
+            unlockConditions.putIfAbsent(pageCondition.getUUID(), pageCondition);
+
+        for(var lines : page.getRawPage()) {
+            var condition = lines.getCondition();
+            if(condition != null)
+                unlockConditions.putIfAbsent(condition.getUUID(), condition);
+        }
         pages.add(page);
 //        var meta = (BookMeta)book.getItemMeta();
 //        meta.spigot().addPage(page.getRaw());
 //        book.setItemMeta(meta);
 
-    }
-    public void addPage(QuestComponent[]... components) {
-        for(var c : components) {
-            var page = new QuestPage(c);
-            addPage(page);
-        }
     }
 
     /***
@@ -70,12 +81,20 @@ public class QuestBook {
         bookMeta.setAuthor(author);
         var spigot = bookMeta.spigot();
         for(var p : pages) {
-            if(player.getQuestData().getUnlocked(p.getCondition()))
+            if(player.getUnlocked(p.getCondition()))
                 spigot.addPage(p.getPage(player));
         }
         book.setItemMeta(bookMeta);
 
         return book;
+    }
+    public QuestPage getPage(int index) {
+        return pages.get(index);
+    }
+
+    public ItemStack getAdminBook() {
+        //change the conditions in minecraft
+        return null;
     }
     private QuestBook() {
     }

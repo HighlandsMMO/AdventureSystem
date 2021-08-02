@@ -4,8 +4,8 @@ import java.util.UUID;
 
 public abstract class UnlockCondition implements IUnlockCondition{
     protected String identifier;
-    protected Identifiers type;
     protected UUID uuid;
+
 
     @Override
     public void setUUID(UUID uuid) {
@@ -17,15 +17,6 @@ public abstract class UnlockCondition implements IUnlockCondition{
         return uuid;
     }
 
-    @Override
-    public void setType(Identifiers type) {
-        this.type = type;
-    }
-
-    @Override
-    public Identifiers getType() {
-        return type;
-    }
 
     @Override
     public String getIdentifier() {
@@ -41,7 +32,6 @@ public abstract class UnlockCondition implements IUnlockCondition{
     public boolean equals(Object obj) {
         if(obj instanceof IUnlockCondition condition) {
             if(getIdentifier().equals(condition.getIdentifier()) &&
-                    getType().equals(condition.getType()) &&
                     getUUID().equals(condition.getUUID()) &&
                     getEvent().equals(condition.getEvent()))
                 return true;

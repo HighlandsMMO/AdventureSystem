@@ -4,6 +4,11 @@ description: Test
 version: 0.1.0
 author: EnderGS
 api-version: 1.17
+softdepend: [Citizens, MMOItems]
+load: POSTWORLD
 commands:
   ecore:
     description: A great command
+permissions:
+  ender.exploration.admin:
+    description: Gives access to everything
