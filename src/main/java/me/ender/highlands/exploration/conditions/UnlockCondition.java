@@ -1,5 +1,6 @@
 package me.ender.highlands.exploration.conditions;
 
+import me.ender.highlands.exploration.QuestPlayer;
 import me.ender.highlands.exploration.book.IQuestReward;
 import me.ender.highlands.exploration.book.QuestReward;
 
@@ -40,6 +41,20 @@ public abstract class UnlockCondition implements IUnlockCondition{
     @Override
     public void setQuestReward(IQuestReward reward) {
         this.reward = reward;
+    }
+
+    @Override
+    public boolean registerReward(QuestPlayer player) {
+        if(player.rewardClaimed(this)){
+            return false; //already used;
+        }
+        if(reward.registerReward(player)) {
+            player.claimReward(this);
+            return true;
+        } else {
+            //do nothing
+            return false;
+        }
     }
 
     @Override

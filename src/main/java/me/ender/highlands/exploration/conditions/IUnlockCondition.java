@@ -1,5 +1,6 @@
 package me.ender.highlands.exploration.conditions;
 
+import me.ender.highlands.exploration.QuestPlayer;
 import me.ender.highlands.exploration.book.IQuestReward;
 
 import java.util.UUID;
@@ -25,7 +26,7 @@ public interface IUnlockCondition {
     IQuestReward getQuestReward();
     void setQuestReward(IQuestReward reward);
 
-
+    boolean registerReward(QuestPlayer player);
 
 
 }

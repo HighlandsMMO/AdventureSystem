@@ -1,5 +1,6 @@
 package me.ender.highlands.exploration.data;
 
+import me.ender.highlands.exploration.book.QuestReward;
 import me.ender.highlands.exploration.conditions.IUnlockCondition;
 
 import java.util.UUID;
@@ -20,6 +21,9 @@ public interface IQuestData {
     void setUnlocked(IUnlockCondition condition);
 
     void setLocked(IUnlockCondition condition);
+
+    void claimReward(IUnlockCondition condition);
+    boolean rewardClaimed(IUnlockCondition condtion);
 
     void saveData();
 }

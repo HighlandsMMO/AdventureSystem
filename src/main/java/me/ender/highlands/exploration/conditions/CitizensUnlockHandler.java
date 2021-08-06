@@ -57,9 +57,10 @@ public class CitizensUnlockHandler implements Listener {
         System.out.println(e.getNPC());
         if(npcRightClickMap.containsKey(e.getNPC().getId())) {
             var list = npcRightClickMap.get(e.getNPC().getId());
-            var player = e.getClicker().getUniqueId();
+            var player = e.getClicker();
+            var data = explorationHandler.getPlayer(player);
             for(var entry : list) {
-                explorationHandler.getQuestData(player).setUnlocked(entry);
+                data.setUnlocked(entry);
             }
         }
     }

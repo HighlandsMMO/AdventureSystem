@@ -41,7 +41,7 @@
                 <version>2.4</version>
                 <configuration>
                     <finalName>${project.name}</finalName>
-                    <outputDirectory>C:\Users\sharp\Pictures\mc\plugins</outputDirectory>
+                    <outputDirectory>C:\Users\Caedin Cook\3D Objects\test\plugins</outputDirectory>
                 </configuration>
             </plugin>
             <plugin>
@@ -100,11 +100,13 @@
             <groupId>io.lumine</groupId>
             <artifactId>MythicLib</artifactId>
             <version>1.1.1</version>
+            <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>io.mythiccraft</groupId>
             <artifactId>mmoitems</artifactId>
             <version>6.6.0</version>
+            <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>net.citizensnpcs</groupId>
@@ -117,6 +119,7 @@
             <groupId>com.google.code.gson</groupId>
             <artifactId>gson</artifactId>
             <version>2.8.0</version>
+            <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>com.google.inject</groupId>

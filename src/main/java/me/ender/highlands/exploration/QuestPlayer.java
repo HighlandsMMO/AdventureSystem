@@ -17,24 +17,25 @@ import java.nio.file.Files;
 import java.nio.file.OpenOption;
 import java.nio.file.Path;
 import java.nio.file.StandardOpenOption;
-import java.util.HashSet;
-import java.util.Set;
-import java.util.UUID;
+import java.util.*;
 
 public class QuestPlayer implements IQuestData{
     private final UUID uuid;
     private transient Player player;
     private Set<UUID> conditionStore;
+    private Map<UUID, Boolean> unlockedRewards;
 
-    public QuestPlayer(UUID uuid, Set<UUID> conditionStore) {
+    public QuestPlayer(UUID uuid, Set<UUID> conditionStore, Map<UUID, Boolean> unlockedRewards) {
         this.uuid = uuid;
         this.conditionStore = conditionStore;
+        this.unlockedRewards = unlockedRewards;
     }
     public QuestPlayer(Player player) {
         this.player = player;
         this.uuid = player.getUniqueId();
         //questData = new BaseQuestData(); //just return false for everything
         conditionStore = new HashSet<>();
+        unlockedRewards = new HashMap<>();
     }
 
 
@@ -53,8 +54,11 @@ public class QuestPlayer implements IQuestData{
     }
     @Override
     public void setUnlocked(IUnlockCondition condition) {
-        if(condition != null) {
+        if(condition != null && !conditionStore.contains(condition.getUUID())) {
             conditionStore.add(condition.getUUID());
+            var reward = condition.getQuestReward();
+            if(reward != null)
+                unlockedRewards.putIfAbsent(condition.getUUID(), false);
             saveData();
         }
     }
@@ -68,13 +72,22 @@ public class QuestPlayer implements IQuestData{
     }
 
     @Override
+    public void claimReward(IUnlockCondition condition) {
+        unlockedRewards.replace(condition.getUUID(), true);
+        saveData();
+    }
+
+    @Override
+    public boolean rewardClaimed(IUnlockCondition condition) {
+        return unlockedRewards.get(condition.getUUID());
+    }
+
+    @Override
     public void saveData() {
         var path = "plugins/HighlandsExploration/players/"+getPlayer().getUniqueId().toString();
-//        new TypeToken<Set<UUID>>() {}.getType();
-        //var new Gson().toJson(conditionStore);
-        var str = GsonComponentSerializer.gson().serializer().toJson(conditionStore);
+        var str = ExplorationHandler.GSON.toJson(this);
         try {
-            Files.writeString(Path.of(path), str, StandardOpenOption.CREATE);
+            Files.writeString(Path.of(path), str, StandardOpenOption.CREATE, StandardOpenOption.TRUNCATE_EXISTING);
         } catch (IOException e) {
             e.printStackTrace();
         }

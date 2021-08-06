@@ -9,6 +9,8 @@ load: POSTWORLD
 commands:
   ecore:
     description: A great command
+  equest:
+    description: The quest command
 permissions:
   ender.exploration.admin:
     description: Gives access to everything

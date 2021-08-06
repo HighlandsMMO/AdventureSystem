@@ -69,7 +69,7 @@ public class LocationUnlockHandler implements Listener {
         var list = blockClickEventMap.get(block);
         if(list == null)
             return;
-        var data = explorationHandler.getQuestData(e.getPlayer().getUniqueId()); //data should never be null;
+        var data = explorationHandler.getPlayer(e.getPlayer()); //data should never be null;
         for(var condition : list) {
             data.setUnlocked(condition);
         }

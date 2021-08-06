@@ -9,6 +9,7 @@ public abstract class QuestReward implements IQuestReward{
     public QuestReward(RewardType type, String data) {
         this.type = type;
         this.data = data;
+        parseData();
     }
 
     @Override

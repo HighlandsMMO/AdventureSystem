@@ -19,16 +19,16 @@ public class MMOQuestReward extends QuestReward {
     }
     public MMOQuestReward(String data) {
         super(RewardType.Item, data);
+    }
+
+    @Override
+    void parseData() {
         var split = data.split(" "); //split SWORD TEST
         //if(split.length != 2)
         itemType = Type.get(split[0]);
         id = split[1].toUpperCase(Locale.ROOT);
         //check if valid?
         //MMOItems.plugin.getTypes().get()
-    }
-
-    @Override
-    void parseData() {
         item = MMOItems.plugin.getMMOItem(itemType,id);
     }
 

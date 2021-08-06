@@ -27,6 +27,9 @@ public class QuestBookSerializer implements JsonSerializer<QuestBook>, JsonDeser
         var book = new JsonObject();
         book.addProperty("title", src.title);
         book.addProperty("author", src.author);
+        if(src.getViewCondition() != null) {
+            book.add("condition", serializeCondition(src.getViewCondition()));
+        }
         var jsonPages = new JsonArray();
 
         var pages = new JsonArray();
@@ -41,7 +44,7 @@ public class QuestBookSerializer implements JsonSerializer<QuestBook>, JsonDeser
             jsonPage.add("components", jsonComps);
 
             if(page.getCondition()!= null) {
-                jsonPage.add("conditions", serializeCondition(page.getCondition()));
+                jsonPage.add("condition", serializeCondition(page.getCondition()));
             }
 
             jsonPages.add(jsonPage);
@@ -55,6 +58,10 @@ public class QuestBookSerializer implements JsonSerializer<QuestBook>, JsonDeser
         var title = jsonBook.get("title").getAsString();
         var author = jsonBook.get("author").getAsString();
         var book = new QuestBook(title, author);
+        var jsonCondition = jsonBook.get("condition");
+        if(jsonCondition != null) {
+            book.setViewCondition(deserializeCondition(jsonCondition.getAsJsonObject()));
+        }
         var contents = jsonBook.getAsJsonArray("pages");
 
         for(var p : contents) {
@@ -285,6 +292,9 @@ public class QuestBookSerializer implements JsonSerializer<QuestBook>, JsonDeser
         switch(impl) {
             case "MMOQuestReward" -> {
                 return new MMOQuestReward(id);
+            }
+            case "CommandQuestReward" -> {
+                return new CommandQuestReward(id);
             }
         }
         return null;
